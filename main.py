@@ -22,12 +22,12 @@ class User(BaseModel):
     first_name: str = Field(
         ...,
         min_length=1,
-        max_length=50
+        max_length=50,
         )
     last_name: str = Field(
         ...,
         min_length=1,
-        max_length=50
+        max_length=50,
         )
     email: EmailStr = Field(
         ...,
@@ -44,19 +44,19 @@ class User(BaseModel):
     is_active: Optional[bool] = Field(default=True)
     class Config:
         schema_extra={
-            "John":
+            "example":
             {"first_name": "John",
             "last_name": "Doe",
             "email": "john@doe.com",
             "password": "qwerty",
-            "credit_card_number": "4241330108991234",
+            "credit_card_number": "5559240894706825",
             "role": "user",
             "photo_url": "https://www.google.com",}
         }
 class Location(BaseModel):
-    city: Optional[str]= Field(default=None) 
-    state: Optional[str]= Field(default=None) 
-    country: Optional[str]= Field(default=None) 
+    city: Optional[str]= Field(default=None, example="New York") 
+    state: Optional[str]= Field(default=None, example="NY")
+    country: Optional[str]= Field(default=None, example="United States") 
 
 # Request and Response body
 @app.post('/user/new')
@@ -101,9 +101,9 @@ def update_user(
         description="User's unique identifier",
     ),
     user: User = Body(...),
-    location: Location = Body(...)
+    # location: Location = Body(...)
 ):  
-    results = user.dict()
-    results.update(location.dict())
+    # results = user.dict()
+    # results.update(location.dict())
 
-    return results
+    return user
