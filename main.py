@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from fastapi import FastAPI
 from fastapi import Body
+from fastapi import Query
 
 app = FastAPI()
 
@@ -26,3 +27,10 @@ class User(BaseModel):
 def create_user(user: User = Body(...)):
     return user
     
+# Simple Validations
+@app.get('/user/detail')
+def get_user_detail(
+    age: Optional[str] = Query(None, min_length=1, max_length=50),
+    description: str = Query(...)
+):
+    return {"age": age, "description": description}
