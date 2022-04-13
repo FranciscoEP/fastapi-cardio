@@ -1,7 +1,7 @@
 from typing import Optional
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr, AnyHttpUrl, PaymentCardNumber
 
 from fastapi import FastAPI
 from fastapi import Body,Query, Path
@@ -29,24 +29,24 @@ class User(BaseModel):
         min_length=1,
         max_length=50
         )
-    email: str = Field(
+    email: EmailStr = Field(
         ...,
-        min_length=1,
-        max_length=50
+    
         )
     password: str = Field(
         ...,
         min_length=1,
         max_length=50
         )
+    credit_card_number: Optional[PaymentCardNumber] = Field(default=None)
     role: Optional[Role] = Field(default='user') 
-    photo_url: Optional[str] = Field(default=None)
+    photo_url: Optional[AnyHttpUrl] = Field(default=None)
     is_active: Optional[bool] = Field(default=True)
 
 class Location(BaseModel):
-    city: str 
-    state: str
-    country: str
+    city: Optional[str]= Field(default=None) 
+    state: Optional[str]= Field(default=None) 
+    country: Optional[str]= Field(default=None) 
 
 # Request and Response body
 @app.post('/user/new')
