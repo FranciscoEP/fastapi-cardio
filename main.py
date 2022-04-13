@@ -70,11 +70,13 @@ def get_user_detail(
         ...,
         title='User age',
         description='User age and it is required. User age must be a number',
+        example="22" 
          ),
     description: Optional[str] = Query(
         None,
         title="User main description",
-        description="User's main's profile description"
+        description="User's main's profile description",
+        example="Description"
     )
     
 
