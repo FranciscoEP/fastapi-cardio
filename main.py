@@ -42,7 +42,17 @@ class User(BaseModel):
     role: Optional[Role] = Field(default='user') 
     photo_url: Optional[AnyHttpUrl] = Field(default=None)
     is_active: Optional[bool] = Field(default=True)
-
+    class Config:
+        schema_extra={
+            "John":
+            {"first_name": "John",
+            "last_name": "Doe",
+            "email": "john@doe.com",
+            "password": "qwerty",
+            "credit_card_number": "4241330108991234",
+            "role": "user",
+            "photo_url": "https://www.google.com",}
+        }
 class Location(BaseModel):
     city: Optional[str]= Field(default=None) 
     state: Optional[str]= Field(default=None) 
