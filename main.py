@@ -21,6 +21,10 @@ class User(BaseModel):
     photo_url: Optional[str] = None
     is_active: Optional[bool] = True
 
+class Location(BaseModel):
+    city: str
+    state: str
+    country: str
 
 # Request and Response body
 @app.post('/user/new')
@@ -54,3 +58,20 @@ def get_user_detail(
     )
 ):
     return {user_id: "Exists"}
+
+
+#Validations: Request body
+@app.put("/user/update/{user_id}")
+def update_user(
+    user_id: int = Path(..., 
+        gt=0,
+        title="User ID",
+        description="User's unique identifier",
+    ),
+    user: User = Body(...),
+    location: Location = Body(...)
+):  
+    results = user.dict()
+    results.update(location.dict())
+
+    return results
