@@ -3,8 +3,8 @@ from typing import Optional
 from pydantic import BaseModel
 
 from fastapi import FastAPI
-from fastapi import Body
-from fastapi import Query
+from fastapi import Body,Query, Path
+
 
 app = FastAPI()
 
@@ -30,7 +30,27 @@ def create_user(user: User = Body(...)):
 # Simple Validations
 @app.get('/user/detail')
 def get_user_detail(
-    age: Optional[str] = Query(None, min_length=1, max_length=50),
-    description: str = Query(...)
+    age: Optional[str] = Query(
+        ...,
+        title='User age',
+        description='User age and it is required. User age must be a number',
+         ),
+    description: Optional[str] = Query(
+        None,
+        title="User main description",
+        description="User's main's profile description"
+    )
+    
+
 ):
     return {"age": age, "description": description}
+
+@app.get('/user/detail/{user_id}')
+def get_user_detail(
+    user_id: int = Path(..., 
+        gt=0,
+        title="User ID",
+        description="User's unique identifier",
+    )
+):
+    return {user_id: "Exists"}
