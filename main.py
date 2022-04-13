@@ -1,6 +1,7 @@
 from typing import Optional
+from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from fastapi import FastAPI
 from fastapi import Body,Query, Path
@@ -13,16 +14,37 @@ def home():
     return {"message": "Status OK"}
 
 # Models
+class Role(Enum):
+    admin = "admin"
+    user = "user"
+    manager = 'manager'
 class User(BaseModel):
-    first_name: str
-    last_name: str
-    email: str
-    password: str
-    photo_url: Optional[str] = None
-    is_active: Optional[bool] = True
+    first_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=50
+        )
+    last_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=50
+        )
+    email: str = Field(
+        ...,
+        min_length=1,
+        max_length=50
+        )
+    password: str = Field(
+        ...,
+        min_length=1,
+        max_length=50
+        )
+    role: Optional[Role] = Field(default='user') 
+    photo_url: Optional[str] = Field(default=None)
+    is_active: Optional[bool] = Field(default=True)
 
 class Location(BaseModel):
-    city: str
+    city: str 
     state: str
     country: str
 
