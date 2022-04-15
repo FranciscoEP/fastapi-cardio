@@ -4,7 +4,7 @@ from enum import Enum
 from pydantic import BaseModel, Field, EmailStr, AnyHttpUrl, PaymentCardNumber
 
 from fastapi import FastAPI
-from fastapi import Body,Query, Path, status
+from fastapi import Body,Query, Path, status,Form
 
 
 
@@ -56,6 +56,9 @@ class Location(BaseModel):
     city: Optional[str]= Field(default=None, example="New York") 
     state: Optional[str]= Field(default=None, example="NY")
     country: Optional[str]= Field(default=None, example="United States") 
+
+class Login_Out(BaseModel):
+    username: str = Field(..., max_length=20, example="johndoe")
 
 
 # Request and Response body
@@ -123,3 +126,10 @@ def update_user(
     # results.update(location.dict())
 
     return user
+
+@app.post(path="/user/login", response_model=Login_Out, status_code=status.HTTP_200_OK)
+def login(
+    username: str = Form(...),
+    password: str = Form(...),
+):
+    return Login_Out(username=username)
