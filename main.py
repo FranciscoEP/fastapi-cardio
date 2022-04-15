@@ -3,8 +3,20 @@ from enum import Enum
 
 from pydantic import BaseModel, Field, EmailStr, AnyHttpUrl, PaymentCardNumber
 
-from fastapi import FastAPI
-from fastapi import Body,Query, Path, status,Form,Header,Cookie
+from fastapi import (
+    FastAPI, 
+    Body,
+    Query,
+    Path, 
+    status,
+    Form,
+    Header,
+    Cookie, 
+    UploadFile, 
+    File,
+    HTTPException,
+    )
+
 
 
 
@@ -78,6 +90,8 @@ def create_user(user: User_In = Body(...)):
     return user
     
 # Simple Validations
+users = [1, 2, 3, 4, 5] 
+
 @app.get(
     path='/user/detail', 
     status_code=status.HTTP_200_OK
@@ -108,6 +122,8 @@ def get_user_detail(
         description="User's unique identifier",
     )
 ):
+    if user_id not in users:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return {user_id: "Exists"}
 
 
@@ -160,3 +176,17 @@ def contact(
 
 ):
     return user_agent
+
+
+@app.post(
+    path="/post-image"
+)
+def post_image(
+    image: UploadFile = File(...)
+):
+    return {"Filename": image.filename,
+    "Format": image.content_type,
+    "Size(kb)": round(len(image.file.read()) / 1024, 2)
+    }
+
+    
