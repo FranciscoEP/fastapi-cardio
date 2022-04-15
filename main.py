@@ -4,21 +4,16 @@ from enum import Enum
 from pydantic import BaseModel, Field, EmailStr, AnyHttpUrl, PaymentCardNumber
 
 from fastapi import FastAPI
-from fastapi import Body,Query, Path
+from fastapi import Body,Query, Path, status
 
 
-app = FastAPI()
-
-@app.get("/")
-def home():
-    return {"message": "Status OK"}
 
 # Models
 class Role(Enum):
     admin = "admin"
     user = "user"
     manager = 'manager'
-class User(BaseModel):
+class User_Base(BaseModel):
     first_name: str = Field(
         ...,
         min_length=1,
@@ -33,11 +28,6 @@ class User(BaseModel):
         ...,
     
         )
-    password: str = Field(
-        ...,
-        min_length=1,
-        max_length=50
-        )
     credit_card_number: Optional[PaymentCardNumber] = Field(default=None)
     role: Optional[Role] = Field(default='user') 
     photo_url: Optional[AnyHttpUrl] = Field(default=None)
@@ -48,23 +38,47 @@ class User(BaseModel):
             {"first_name": "John",
             "last_name": "Doe",
             "email": "john@doe.com",
-            "password": "qwerty",
+            "password": "qwerty123",
             "credit_card_number": "5559240894706825",
             "role": "user",
             "photo_url": "https://www.google.com",}
         }
+
+class User_In(User_Base):
+    password: str = Field(
+        ...,
+        min_length=8,
+        )
+
+class User_Out(User_Base):
+    pass
 class Location(BaseModel):
     city: Optional[str]= Field(default=None, example="New York") 
     state: Optional[str]= Field(default=None, example="NY")
     country: Optional[str]= Field(default=None, example="United States") 
 
+
 # Request and Response body
-@app.post('/user/new')
-def create_user(user: User = Body(...)):
+app = FastAPI()
+
+@app.get(path="/", status_code=status.HTTP_200_OK)
+def home():
+    return {"message": "Status OK"}
+
+
+@app.post(
+    path='/user/new',
+    response_model=User_Out,
+    status_code=status.HTTP_201_CREATED
+    )
+def create_user(user: User_In = Body(...)):
     return user
     
 # Simple Validations
-@app.get('/user/detail')
+@app.get(
+    path='/user/detail', 
+    status_code=status.HTTP_200_OK
+    )
 def get_user_detail(
     age: Optional[str] = Query(
         ...,
@@ -83,7 +97,7 @@ def get_user_detail(
 ):
     return {"age": age, "description": description}
 
-@app.get('/user/detail/{user_id}')
+@app.get('/user/detail/{user_id}', status_code=status.HTTP_200_OK)
 def get_user_detail(
     user_id: int = Path(..., 
         gt=0,
@@ -95,14 +109,14 @@ def get_user_detail(
 
 
 #Validations: Request body
-@app.put("/user/update/{user_id}")
+@app.put("/user/update/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 def update_user(
     user_id: int = Path(..., 
         gt=0,
         title="User ID",
         description="User's unique identifier",
     ),
-    user: User = Body(...),
+    user: User_In = Body(...),
     # location: Location = Body(...)
 ):  
     # results = user.dict()
