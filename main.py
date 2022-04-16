@@ -114,7 +114,9 @@ users = [1, 2, 3, 4, 5]
 @app.get(
     path='/user/detail', 
     status_code=status.HTTP_200_OK,
-    tags=['Users']
+    tags=['Users'],
+    summary="Display age and description in the app",
+    deprecated=True
     )
 def get_user_detail(
     age: Optional[str] = Query(
@@ -149,7 +151,9 @@ def get_user_detail(
 @app.get(
     path='/user/detail/{user_id}', 
     status_code=status.HTTP_200_OK,
-    tags=['Users'])
+    tags=['Users'],
+    summary="Display user's information in the app"
+    )
 def get_user_detail(
     user_id: int = Path(..., 
         gt=0,
@@ -177,7 +181,9 @@ def get_user_detail(
 @app.put(
     path="/user/update/{user_id}", 
     status_code=status.HTTP_204_NO_CONTENT,
-    tags=['Users'])
+    tags=['Users'],
+    summary="Updates user's information in the app"
+    )
 def update_user(
     user_id: int = Path(..., 
         gt=0,
@@ -208,7 +214,9 @@ def update_user(
     path="/user/login",
     response_model=Login_Out,
     status_code=status.HTTP_200_OK,
-    tags=['Users']
+    tags=['Users'],
+    summary="Log in user in the app"
+
     )
 def login(
     username: str = Form(...),
@@ -232,7 +240,9 @@ def login(
 @app.post(
     path="/contact", 
     status_code=status.HTTP_200_OK,
-    tags=['Contact'])
+    tags=['Contact'],
+    summary="Obtain information from a contact form"
+    )
 def contact(
     first_name: str = Form(
     ...,
@@ -276,7 +286,9 @@ def contact(
 @app.post(
     path="/post-image",
     status_code=status.HTTP_200_OK,
-    tags=['Images']
+    tags=['Images'],
+    summary="Return information from an image file"
+
 )
 def post_image(
     image: UploadFile = File(...)
